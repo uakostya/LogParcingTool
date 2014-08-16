@@ -28,9 +28,9 @@ namespace LogParcer.View {
             App.Current.Exit += Current_Exit;
             DataContext = _mainVm;
             LogItemsListView.ItemsSource = _mainVm.LogItems;
-            var bindingOpen = new CommandBinding(ApplicationCommands.Open);
-            bindingOpen.Executed += _mainVm.OpenLogFile;
-            CommandBindings.Add(bindingOpen);
+            //var bindingOpen = new CommandBinding(ApplicationCommands.Open);
+            //bindingOpen.Executed += _mainVm.OpenLogFile;
+            //CommandBindings.Add(bindingOpen);
             var bindingBrowse = new CommandBinding(Common.Commands.BrowseForLogFolder);
             bindingBrowse.Executed += _mainVm.BrowseLogFilesAndProcess;
             CommandBindings.Add(bindingBrowse);

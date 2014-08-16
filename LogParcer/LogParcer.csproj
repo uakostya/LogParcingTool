@@ -117,6 +117,7 @@
     </Compile>
     <Compile Include="Common\Commands.cs" />
     <Compile Include="Common\DelegateCommand.cs" />
+    <Compile Include="Common\LogicUtilities.cs" />
     <Compile Include="ViewModel\ButtonData.cs" />
     <Compile Include="ViewModel\ControlData.cs" />
     <Compile Include="ViewModel\LogItemVM.cs" />

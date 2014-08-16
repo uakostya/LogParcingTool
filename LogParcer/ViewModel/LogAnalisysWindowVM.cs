@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -10,18 +11,18 @@ using System.Windows.Documents;
 using Catel.Collections;
 using Catel.Data;
 using  Catel.MVVM;
+using LogParcer.Common;
 using LogParcingUtilities;
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.IO;
 using ClosedXML.Excel;
+using System.Threading;
 
 
 namespace LogParcer.ViewModel {
     class LogAnalisysWindowVM : ViewModelBase {
-        public ObservableCollection<LogItemVM> LogItems { get; set; }
-        public SettingsVM Settings = InitSettings();
-
+        private CancellationTokenSource _currenTokenSource;
         private static SettingsVM InitSettings() {
             if (File.Exists(SettingsVM.FileName)) {
                 var fs = new FileStream(SettingsVM.FileName, FileMode.Open);
@@ -31,55 +32,41 @@ namespace LogParcer.ViewModel {
             }
             return new SettingsVM();
         }
+        private static bool _isConverting = false;
 
-        public decimal MinExecutionTimeToShow { get; set; }
+        public ObservableCollection<LogItemVM> LogItems { get; set; }
+        public SettingsVM Settings = InitSettings();
+        public string CurrentSqlText { get; set; }
 
         public LogAnalisysWindowVM() {
             LogItems = new ObservableCollection<LogItemVM>();
+            CancelCommand = new Command(cancelCurrentCommand, () => _currenTokenSource != null);
         }
-        public  string CurrentSqlText { get; set; }
- 
-        public void OpenLogFile(object sender, RoutedEventArgs e) {
         
-        }
         public async void ConvertToExcel(object sender, RoutedEventArgs e) {
-            var dialog = new CommonOpenFileDialog();
-            dialog.IsFolderPicker = true;
+            var dialog = new CommonOpenFileDialog {IsFolderPicker = true};
             if (dialog.ShowDialog() != CommonFileDialogResult.Ok) return;
             var saveDialog = new SaveFileDialog {FileName = "report.xlsx"};
             if (!(saveDialog.ShowDialog() ?? false)) return;
             var p = new DBExecutorLogParcer();
-            var config = p.GetFileConfig();
-            await Task.Run(() => {
-                var excelDoc = new XLWorkbook();
-                foreach (var dir in Directory.EnumerateDirectories(dialog.FileName, "*.*", SearchOption.AllDirectories).ToList()) {
-                    var sheet = excelDoc.AddWorksheet((new DirectoryInfo(dir)).Name);
-                    var file = Path.Combine(dir, Settings.LogFileName);
-                    if (File.Exists(file)) {
-                        int i = 0;
-                        var list = p.ParceFile(file, config);
-                        foreach (var row in list.Where(item => item.Key > Settings.MinExecutionTimeDecimal)) {
-                            sheet.Cell(++i, 1).Value = row.Value.Date;
-                            sheet.Cell(i, 2).Value = row.Value.ExecutionTime;
-                            if (row.Value.Query.Length > 32766) {
-                                sheet.Cell(i, 3).Value = row.Value.Query.Substring(0, 32766);
-                                sheet.Cell(i, 4).Value = row.Value.Query.Substring(32766);
-                            } else {
-                                sheet.Cell(i, 3).Value = row.Value.Query;
-                            }
-                            sheet.Row(i).Style.Alignment.SetWrapText(false);
-                        }
-                    }
-                    sheet.Cell(1, 1).WorksheetColumn().AdjustToContents();
-                    sheet.Cell(1, 2).WorksheetColumn().AdjustToContents();
-                    sheet.Cell(1, 3).WorksheetColumn().AdjustToContents();
-                    sheet.Cell(1, 4).WorksheetColumn().AdjustToContents();
+            var minExecTime = Settings.MinExecutionTimeDecimal;
+            var useMinExecTime = Settings.UseMinExecTimeInExcell;
+
+            lock (this) {
+                if (_isConverting) {
+                    CancelCommand.Execute();
                 }
-                excelDoc.SaveAs(saveDialog.FileName);
-                excelDoc.Dispose();
-                System.Diagnostics.Process.Start(saveDialog.FileName);
-            });
+                _isConverting = true;
+            }
+            LogicUtilities.DoConvertOperation(dialog, p, useMinExecTime, minExecTime, saveDialog.FileName);
+            lock (this) {
+                _isConverting = false;
+            }
+            _currenTokenSource = null;
         }
+
+        
+
         public async void BrowseLogFilesAndProcess(object sender, RoutedEventArgs e) {
             var ofd = new OpenFileDialog();
             if (ofd.ShowDialog() ?? false) {
@@ -92,6 +79,15 @@ namespace LogParcer.ViewModel {
                     }
                 });
                 LogItems.AddRange(infVM);
+            }
+        }
+
+        public Command CancelCommand;
+
+        private void cancelCurrentCommand() {
+            if (_currenTokenSource != null) {
+                _currenTokenSource.Cancel();
+                _currenTokenSource = null;
             }
         }
     }

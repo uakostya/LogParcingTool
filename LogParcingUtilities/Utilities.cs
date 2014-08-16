@@ -56,7 +56,6 @@ namespace LogParcingUtilities
             }
             return result;
         }
-
         private static string GetDateString(string[] tmpArr) {
             if (tmpArr.Length < 2) return string.Empty;
             var time = tmpArr[1];
