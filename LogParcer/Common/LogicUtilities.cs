@@ -21,7 +21,7 @@ namespace LogParcer.Common {
             var result = new ParallelLoopResult();
             try {
                 result = Parallel.ForEach(
-                    Directory.EnumerateDirectories(options.Directory, "*.*", SearchOption.AllDirectories).ToList(),
+                    Directory.EnumerateDirectories(options.Directory, "*.*", options.SearchOption).ToList(),
                     pOpt,
                     (dir) => {
                         var sheet = (new XLWorkbook()).AddWorksheet((new DirectoryInfo(dir)).Name);
@@ -55,17 +55,16 @@ namespace LogParcer.Common {
             }
             excelDoc.SaveAs(options.OutFile);
             excelDoc.Dispose();
-            if (options.RunExportedFile) System.Diagnostics.Process.Start(options.OutFile);
         }
     }
 
    public class  ExcelConvertingOptions {
-        public decimal? MinExecutionTime { get; set; }
-        public string LogFileName { get; set; }
-        public string Directory { get; set; }
-        public string OutFile { get; set; }
-        public CancellationToken CancellationToken { get; set; }
-       public bool RunExportedFile { get; set; }
+       public decimal? MinExecutionTime { get; set; }
+       public string LogFileName { get; set; }
+       public string Directory { get; set; }
+       public string OutFile { get; set; }
+       public CancellationToken CancellationToken { get; set; }
        public DBExecutorLogParcer Parcer { get; set; }
+       public SearchOption SearchOption { get; set; }
     }
 }

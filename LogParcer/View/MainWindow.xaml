@@ -2,7 +2,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:view="clr-namespace:LogParcer.View"
-         xmlns:ribbon="http://schemas.microsoft.com/winfx/2006/xaml/presentation/ribbon"     
-        Title="MainWindow" Height="378.62" Width="1006.872" >
-    <view:LogAnalisys></view:LogAnalisys>
+         xmlns:ribbon="http://schemas.microsoft.com/winfx/2006/xaml/presentation/ribbon"
+         xmlns:controls="clr-namespace:LogParcer.Controls"
+         Title="MainWindow" Height="378.62" Width="1006.872" >
+   <view:LogAnalisys></view:LogAnalisys>
+  
 </ribbon:RibbonWindow>

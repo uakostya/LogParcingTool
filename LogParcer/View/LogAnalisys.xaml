@@ -7,6 +7,7 @@
              xmlns:ribbon="http://schemas.microsoft.com/winfx/2006/xaml/presentation/ribbon"
              xmlns:io="clr-namespace:System.IO;assembly=mscorlib"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:controls="clr-namespace:LogParcer.Controls"
              mc:Ignorable="d" d:DesignHeight="369" d:DesignWidth="1026">
     <UserControl.Resources>
         <ObjectDataProvider MethodName="GetValues"
@@ -257,7 +258,8 @@
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="199*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         <ribbon:Ribbon x:Name="RibbonControl" Grid.Row="0">
             <ribbon:Ribbon.ApplicationMenu>
@@ -276,7 +278,7 @@
                                           Text="{Binding MinExecutionTime, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                     <ribbon:RibbonTextBox Label="File name" Style="{DynamicResource RibbonControlStyle}"
                                           Text="{Binding LogFileName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-                    <ribbon:RibbonToggleButton Label="Search subdirs" LargeImageSource="../Images/subDirs.png"
+                    <ribbon:RibbonToggleButton Label="All dirs" LargeImageSource="../Images/subDirs.png"
                                                Style="{DynamicResource RibbonControlStyle}" IsChecked="{Binding SearchAllDirs}" />
                 </ribbon:RibbonGroup>
                 <ribbon:RibbonGroup Height="auto" Margin="5pt" VerticalAlignment="Top" Width="auto" Name="ExcelRibbonGroup">
@@ -323,6 +325,12 @@
                        Text="{Binding Path=Query}"/>
             </ScrollViewer>
         </Grid>
-
+        <controls:LoadingPanel Grid.Row="2" x:Name="LoadingPanel"
+                        IsLoading="{Binding IsLoading}"
+                        Message="{Binding Message}"
+                        SubMessage="{Binding SubMessage}" 
+                        ClosePanelCommand="{Binding ClosePanelCommand}"
+                        HaveCommandToRun="{Binding HaveCommandToRun}"
+                        VMRoutedCommand ="{Binding CommandToRun}"/>
     </Grid>
 </UserControl>

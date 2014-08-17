@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using LogParcer.ViewModel;
 
 namespace LogParcer.View {
     /// <summary>

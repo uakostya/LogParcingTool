@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,30 +36,39 @@ namespace LogParcer.ViewModel {
         private static bool _isConverting = false;
 
         public ObservableCollection<LogItemVM> LogItems { get; set; }
-        public SettingsVM Settings = InitSettings();
-        public string CurrentSqlText { get; set; }
+        public readonly SettingsVM Settings = InitSettings();
+        public readonly LoadingPanelVM LoadingPanel = new LoadingPanelVM();
 
         public LogAnalisysWindowVM() {
             LogItems = new ObservableCollection<LogItemVM>();
-            CancelCommand = new Command(cancelCurrentCommand, () => _currenTokenSource != null);
+            CancelCommand = new Command(CancelCurrentCommand, () => _currenTokenSource != null);
         }
         
         public async void ConvertToExcel(object sender, RoutedEventArgs e) {
             var dialog = new CommonOpenFileDialog {IsFolderPicker = true};
             if (dialog.ShowDialog() != CommonFileDialogResult.Ok) return;
-            var saveDialog = new SaveFileDialog {FileName = "report.xlsx"};
+            var saveDialog = new SaveFileDialog {
+                FileName = "report.xlsx", DefaultExt = "xlsx", Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*"
+            };
             if (!(saveDialog.ShowDialog() ?? false)) return;
             var p = new DBExecutorLogParcer();
-            var minExecTime = Settings.MinExecutionTimeDecimal;
-            var useMinExecTime = Settings.UseMinExecTimeInExcell;
-
             lock (this) {
                 if (_isConverting) {
                     CancelCommand.Execute();
                 }
                 _isConverting = true;
             }
-            LogicUtilities.DoConvertOperation(dialog, p, useMinExecTime, minExecTime, saveDialog.FileName);
+            _currenTokenSource = new CancellationTokenSource();
+            LoadingPanel.ShowExcelConvertMessage(_currenTokenSource);
+            var options = new ExcelConvertingOptions {
+                Directory = dialog.FileName, OutFile = saveDialog.FileName,
+                Parcer = p,LogFileName = Settings.LogFileName,
+                CancellationToken = _currenTokenSource.Token,
+                SearchOption = (Settings.SearchAllDirs)? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
+            };
+            if (Settings.UseMinExecTimeInExcell) options.MinExecutionTime = Settings.MinExecutionTimeDecimal;
+            await Task.Factory.StartNew(() => LogicUtilities.DoConvertOperation(options),TaskCreationOptions.LongRunning);
+            LoadingPanel.HideExcelConvertMessage(() => Process.Start(options.OutFile));
             lock (this) {
                 _isConverting = false;
             }
@@ -82,13 +92,12 @@ namespace LogParcer.ViewModel {
             }
         }
 
-        public Command CancelCommand;
+        public readonly Command CancelCommand;
 
-        private void cancelCurrentCommand() {
-            if (_currenTokenSource != null) {
-                _currenTokenSource.Cancel();
-                _currenTokenSource = null;
-            }
+        private void CancelCurrentCommand() {
+            if (_currenTokenSource == null) return;
+            _currenTokenSource.Cancel();
+            _currenTokenSource = null;
         }
     }
 }
