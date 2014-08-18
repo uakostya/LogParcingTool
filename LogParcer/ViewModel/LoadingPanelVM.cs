@@ -60,8 +60,11 @@ namespace LogParcer.ViewModel {
 
         #region MessageHelpingMethods
 
-        public void ShowImportingMessage() {
+        public void ShowImportingMessage(CancellationTokenSource tokenSource, string fileName) {
+            _currentCancellationTokenSource = tokenSource;
             IsLoading = true;
+            Message = "Parcing file:";
+            SubMessage = fileName;
         }
 
         public void HideImportingMessage() {
@@ -73,7 +76,15 @@ namespace LogParcer.ViewModel {
             IsLoading = true;
             Message = "Export to Excel";
             SubMessage = "Running";
-            
+        }
+        public void ShowBrowseLogFilesAndProcessMessage(CancellationTokenSource tokenSource, string dir) {
+            _currentCancellationTokenSource = tokenSource;
+            IsLoading = true;
+            Message = "Processing log files";
+            SubMessage = "In: " + dir;
+        }
+        public void HideBrowseLogFilesAndProcessMessage() {
+            IsLoading = false;
         }
         public void HideExcelConvertMessage(Action commandToRun = null) {
             if (commandToRun != null) {

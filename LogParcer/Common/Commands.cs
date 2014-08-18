@@ -9,5 +9,6 @@ namespace LogParcer.Common {
     public static class Commands {
         public static RoutedCommand BrowseForLogFolder = new RoutedCommand();
         public static RoutedCommand ConvertToExcell = new RoutedCommand();
+        public static RoutedCommand ExportToExcel = new RoutedCommand();
     }
 }

@@ -271,7 +271,7 @@
                 <ribbon:RibbonGroup Height="auto" Margin="5pt" VerticalAlignment="Top" Width="auto">
                     <ribbon:RibbonButton DataContext="{x:Static viewModel:LogParcingControlsModel.Open}" Height="18" VerticalAlignment="Top" />
                     <ribbon:RibbonButton DataContext="{x:Static viewModel:LogParcingControlsModel.Browse}" />
-                   
+                    <ribbon:RibbonButton DataContext="{x:Static viewModel:LogParcingControlsModel.ExportToExcel}"/>
                 </ribbon:RibbonGroup>
                 <ribbon:RibbonGroup  Margin="5pt" VerticalAlignment="Top" Name="SettingsRibbonGroup">
                     <ribbon:RibbonTextBox Label="Min query time" Style="{DynamicResource RibbonControlStyle}" 
@@ -292,24 +292,27 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <ListView x:Name="LogItemsListView" Grid.Column="0">
-                <ListView.View >
-                    <GridView >
-                        <GridViewColumn Header="Date" Width="200">
+            <ListView x:Name="LogItemsListView" Grid.Column="0" GridViewColumnHeader.Click="LogItemsListView_OnClick">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn  Width="200">
+                            <GridViewColumnHeader Name="DateHeader" Content="Date" />
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Path=Date, StringFormat='dd.MM.yy hh:mm:ss'}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="ExecutionTime" Width="100">
+                        <GridViewColumn Width="100">
+                            <GridViewColumnHeader Name="ExecutionTimeHeader" Content="ExecutionTime" />
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Path=ExecutionTime}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="QueryText" Width="200">
+                        <GridViewColumn  Width="200">
+                            <GridViewColumnHeader Name="QueryTextHeader" Content="QueryText" />
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Path=Message}"/>
