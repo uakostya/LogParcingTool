@@ -8,7 +8,7 @@ using Catel.MVVM;
 using  Catel.Fody;
 
 namespace LogParcer.ViewModel {
-    class LogItemVM : ViewModelBase {
+   public class LogItemVM : ViewModelBase {
 
         public LogItemVM(LogItem item) {
             Item = item;

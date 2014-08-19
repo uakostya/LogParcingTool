@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 // ReSharper disable once CheckNamespace
 namespace LogParcer {
+	[Serializable]
     public class LogItem {
         public string Level { get; set; }
         public DateTime Date { get; set; }

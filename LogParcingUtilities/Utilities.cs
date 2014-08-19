@@ -77,6 +77,7 @@ namespace LogParcingUtilities
         public StringSplitOptions ColumnSplitOptions { get; set; }
         public Encoding Encoding { get; set; }
     }
+	[Serializable]
     public class DuplicateKeyComparer<TKey> : IComparer<TKey> where TKey : IComparable {
         #region IComparer<TKey> Members
         public int Compare(TKey x, TKey y) {
