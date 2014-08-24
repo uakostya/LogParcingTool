@@ -60,6 +60,9 @@ namespace LogParcer.Common {
                     Log.Error(ex, "{0}", Application.Current.FindResource("IO.Write.Error"));
                     return false;
                 }
+                finally {
+                    fs.Close();
+                }
             }
         }
         public static ConcurrentDictionary<string, SortedList<decimal, LogItem>> LoadList(string path) {

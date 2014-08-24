@@ -18,7 +18,7 @@ using System.IO;
 using System.Threading;
 
 namespace LogParcer.ViewModel {
-   public class LogAnalisysWindowVM : ViewModelBase, IDisposable {
+    class LogAnalisysWindowVM : ViewModelBase {
         private CancellationTokenSource _currenTokenSource;
         private static SettingsVM InitSettings() {
             if (File.Exists(SettingsVM.FileName)) {
@@ -32,7 +32,6 @@ namespace LogParcer.ViewModel {
         private static bool _isInProcess;
         private ConcurrentDictionary<string, SortedList<decimal, LogItem>> _analizedData;
         private string _currentSortingColumn;
-		private bool _listViewIsActual = true;
 
         public ObservableCollection<LogItemVM> LogItems { get; set; }
         public readonly SettingsVM Settings = InitSettings();
@@ -41,19 +40,9 @@ namespace LogParcer.ViewModel {
         public LogAnalisysWindowVM() {
             LogItems = new ObservableCollection<LogItemVM>();
             CancelCommand = new Command(CancelCurrentCommand, () => _currenTokenSource != null);
-			Browse = new Command(BrowseLogFilesAndProcess);
-			OpenLog = new Command(OpenLogFile);
-			Export = new Command(ExportToExcel);
-			Convert = new Command(ConvertToExcel);
-			Load = new Command(LoadViewModel);
-			Save = new Command(SaveViewModel);
-			RefreshListView = new Command(OnRefreshListView, () => {
-				return ((_analizedData != null) && !_listViewIsActual);
-			});
         }
-
-		public Command Convert { get; private set; }
-        public async void ConvertToExcel() {
+        
+        public async void ConvertToExcel(object sender, RoutedEventArgs e) {
             var dialog = new CommonOpenFileDialog {IsFolderPicker = true};
             if (dialog.ShowDialog() != CommonFileDialogResult.Ok) return;
             var saveDialog = new SaveFileDialog {
@@ -88,24 +77,22 @@ namespace LogParcer.ViewModel {
             _currenTokenSource = new CancellationTokenSource();
         }
 
-		public  Command OpenLog { get; private set; }
-        public async void OpenLogFile () {
+        public async void OpenLogFile (object sender, RoutedEventArgs e) {
             var ofd = new OpenFileDialog();
             if (ofd.ShowDialog() ?? false) {
                 StopOtherWork();
                 LoadingPanel.ShowImportingMessage(_currenTokenSource, ofd.FileName);
                 var p = new DBExecutorLogParcer();
-				_analizedData = new ConcurrentDictionary<string, SortedList<decimal, LogItem>>();
-                _analizedData[ofd.FileName] = await Task.Run(() => p.ParceFile(ofd.FileName, p.GetFileConfig()));
-				var infVM = await GetViewModelCollection();
+                var inf = await Task.Run(() => p.ParceFile(ofd.FileName, p.GetFileConfig()));
+                var infVM = new List<LogItemVM>();
+                await Task.Run(() => infVM.AddRange(inf.Where(i => i.Key > Settings.MinExecutionTimeDecimal).ToList().Select(logItem => new LogItemVM(logItem.Value))),
+                    _currenTokenSource.Token);
                 LoadingPanel.HideImportingMessage();
                 LogItems.Clear();
                 LogItems.AddRange(infVM);
             }
         }
-		
-		public Command Browse { get; private set; }
-        public async void BrowseLogFilesAndProcess() {
+        public async void BrowseLogFilesAndProcess(object sender, RoutedEventArgs e) {
             var dialog = new CommonOpenFileDialog { IsFolderPicker = true };
             if (dialog.ShowDialog() != CommonFileDialogResult.Ok) return;
             StopOtherWork();
@@ -117,37 +104,30 @@ namespace LogParcer.ViewModel {
                 SearchOption = (Settings.SearchAllDirs) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
             };
             _analizedData = await Task.Run(() => LogicUtilities.LoadFromDir(options));
-			var infVM = await GetViewModelCollection();
+            var infVM = new List<LogItemVM>();
+            await Task.Run(() => {
+                foreach (var infItem in _analizedData) {
+                    infVM.AddRange(
+                        infItem.Value.Where(i => i.Key > Settings.MinExecutionTimeDecimal)
+                            .ToList()
+                            .Select(logItem => new LogItemVM(logItem.Value)));
+                }
+                infVM.Sort((t1,t2)=>t1.Date.CompareTo(t2.Date));
+            }, _currenTokenSource.Token);
             LoadingPanel.HideBrowseLogFilesAndProcessMessage();
             LogItems.Clear();
             LogItems.AddRange(infVM);
             infVM.Clear();
         }
 
-		private async Task<List<LogItemVM>> GetViewModelCollection() {
-			var infVM = await Task.Run(() => {
-				var res = new List<LogItemVM>();
-				foreach (var infItem in _analizedData) {
-					res.AddRange(
-						infItem.Value.Where(i => i.Key > Settings.MinExecutionTimeDecimal)
-							.ToList()
-							.Select(logItem => new LogItemVM(logItem.Value)));
-				}
-				res.Sort((t1, t2) => t1.Date.CompareTo(t2.Date));
-				return res;
-			}, _currenTokenSource.Token);
-			return infVM;
-		}
-
-        public Command CancelCommand { get; private set; }
+        public readonly Command CancelCommand;
         private void CancelCurrentCommand() {
             if (_currenTokenSource == null) return;
             _currenTokenSource.Cancel();
             _currenTokenSource = null;
         }
 
-		public Command Export { get; private set; }
-        public async void ExportToExcel() {
+        public async void ExportToExcel(object sender, RoutedEventArgs e) {
             var saveDialog = new SaveFileDialog {
                 FileName = "report.xlsx", DefaultExt = "xlsx", Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*"
             };
@@ -161,45 +141,6 @@ namespace LogParcer.ViewModel {
                             saveDialog.FileName), _currenTokenSource.Token);
             LoadingPanel.HideExcelConvertMessage(() => Process.Start(saveDialog.FileName));
         }
-
-		public new Command Load { get; private set; }
-		public async void LoadViewModel() {
-			 var ofd = new OpenFileDialog();
-            if (!(ofd.ShowDialog() ?? false)) return;
-			StopOtherWork();
-			LoadingPanel.ShowLoadMessage(_currenTokenSource, ofd.FileName);
-			_analizedData = await Task.Run( () => LogicUtilities.LoadList(ofd.FileName), _currenTokenSource.Token);
-			await RefreshListViewItems();
-			LoadingPanel.HideMessage();
-		}
-
-		private async Task RefreshListViewItems() {
-			LogItems.Clear();
-			var infVM = await GetViewModelCollection();
-			LogItems.AddRange(infVM);
-			infVM.Clear();
-			_listViewIsActual = true;
-		}
-	    
-	    public new Command Save { get; private set; }
-		public new async void SaveViewModel() {
-			var saveDialog = new SaveFileDialog {
-				FileName = "report.bin", DefaultExt = "bin", Filter = "Binary files (*.bin)|*.bin|All files (*.*)|*.*"
-			};
-			if (!(saveDialog.ShowDialog() ?? false)) return;
-			StopOtherWork();
-			LoadingPanel.ShowSaveMessage(_currenTokenSource, saveDialog.FileName);
-			await Task.Run(() => _analizedData.Save(saveDialog.FileName), _currenTokenSource.Token);
-			LoadingPanel.HideSaveMessage(() => Process.Start((new FileInfo(saveDialog.FileName)).DirectoryName));
-		}
-
-		public Command RefreshListView { get; private set; }
-		public async void OnRefreshListView() {
-			await RefreshListViewItems();
-		}
-		public void MinQueryTimeChanged(object sender, RoutedEventArgs e) {
-			_listViewIsActual = false;
-		}
         public void LogItemsListView_OnClick (object sender, RoutedEventArgs e) {
             var header = e.OriginalSource as GridViewColumnHeader;
             if (header == null)return;
@@ -224,20 +165,5 @@ namespace LogParcer.ViewModel {
             LogItems.Clear();
             LogItems.AddRange(items);
         }
-
-		#region Члены IDisposable
-
-		public void Dispose() {
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-		protected virtual void Dispose(bool clearManagedResources) {
-			if (clearManagedResources) {
-				if (_currenTokenSource != null) {
-					_currenTokenSource.Dispose();
-				}
-			}
-		}
-		#endregion
-   }
+    }
 }

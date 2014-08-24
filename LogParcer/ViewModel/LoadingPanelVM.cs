@@ -10,7 +10,7 @@ using Catel.MVVM;
 
 
 namespace LogParcer.ViewModel {
-	public class LoadingPanelVM : ViewModelBase {
+    class LoadingPanelVM:ViewModelBase {
         public LoadingPanelVM() {
             ClosePanelCommand = new Command(ClosePanelCommandExecute);
             CommandToRun = new Command(CommandToRunExecute);
@@ -61,7 +61,7 @@ namespace LogParcer.ViewModel {
         #region MessageHelpingMethods
 
         public void ShowImportingMessage(CancellationTokenSource tokenSource, string fileName) {
-			SetCurrentTokenSource(tokenSource);
+            _currentCancellationTokenSource = tokenSource;
             IsLoading = true;
             Message = "Parcing file:";
             SubMessage = fileName;
@@ -72,17 +72,13 @@ namespace LogParcer.ViewModel {
         }
 
         public void ShowExcelConvertMessage(CancellationTokenSource tokenSource) {
-			SetCurrentTokenSource(tokenSource);
+            _currentCancellationTokenSource = tokenSource;
             IsLoading = true;
             Message = "Export to Excel";
             SubMessage = "Running";
         }
-
-		private void SetCurrentTokenSource(CancellationTokenSource tokenSource) {
-			_currentCancellationTokenSource = tokenSource;
-		}
         public void ShowBrowseLogFilesAndProcessMessage(CancellationTokenSource tokenSource, string dir) {
-			SetCurrentTokenSource(tokenSource);
+            _currentCancellationTokenSource = tokenSource;
             IsLoading = true;
             Message = "Processing log files";
             SubMessage = "In: " + dir;
@@ -101,31 +97,6 @@ namespace LogParcer.ViewModel {
                 IsLoading = false;
             }
         }
-		public void HideMessage() {
-			IsLoading = false;
-		}
-		public void ShowLoadMessage(CancellationTokenSource tokenSource, string fileName) {
-			SetCurrentTokenSource(tokenSource);
-			Message = "Loading from file:";
-			SubMessage = fileName;
-			IsLoading = true;
-		}
-		public void ShowSaveMessage(CancellationTokenSource tokenSource, string fileName) {
-			SetCurrentTokenSource(tokenSource);
-			Message = "Saving to file";
-			SubMessage = fileName;
-			IsLoading = true;
-		}
-		public void HideSaveMessage(Action commandToRun = null) {
-			if (commandToRun != null) {
-				Message = "Saving to file Completed!";
-				SubMessage = "Open containing folder";
-				_commandToRunAction = commandToRun;
-				HaveCommandToRun = true;
-			} else {
-				IsLoading = false;
-			}
-		}
 
         #endregion
     }
