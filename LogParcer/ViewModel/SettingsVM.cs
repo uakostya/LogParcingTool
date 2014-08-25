@@ -1,13 +1,11 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using Catel.Data;
 using Catel.Reflection;
 using Path = System.IO.Path;
 
 namespace LogParcer.ViewModel {
-	[Serializable]
-    public class SettingsVM: SavableModelBase<SettingsVM> {
+    class SettingsVM: SavableModelBase<SettingsVM> {
         public static string FileName {
             get {
                 const string settingsFileName = "settings.xml";
