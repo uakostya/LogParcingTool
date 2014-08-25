@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Catel.Data;
 using Catel.MVVM;
-using  Catel.Fody;
 
 namespace LogParcer.ViewModel {
    public class LogItemVM : ViewModelBase {
