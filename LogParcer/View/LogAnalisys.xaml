@@ -80,7 +80,7 @@
                         <GridViewColumn  Width="200">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Message}"/>
+                                    <TextBlock Text="{Binding Query}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                             <GridViewColumnHeader x:Name="QueryTextHeader" Content="QueryText" />

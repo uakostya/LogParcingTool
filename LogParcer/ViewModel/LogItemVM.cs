@@ -39,8 +39,10 @@ namespace LogParcer.ViewModel {
         public String Message {
             get { return Item.Message; }
         }
-        public String Query {
-            get { return Item.Query; }
-        }
+		public string Query {
+			get {
+				return (Item.Message.Length > 20) ? Item.Message.Replace(Environment.NewLine, " ").Substring(0, 20) : Item.Message;
+			}
+		}
     }
 }

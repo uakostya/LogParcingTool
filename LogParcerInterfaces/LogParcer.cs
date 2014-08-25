@@ -13,15 +13,7 @@ namespace LogParcer {
         public DateTime Date { get; set; }
         public decimal ExecutionTime { get; set; }
         public string Logger { get; set; }
-        private string _query;
         public string Message { get; set; }
-        public string Query {
-            get { return _query; }
-            set {
-                _query = value;
-                Message = (value.Length > 20) ? value.Replace(Environment.NewLine, " ").Substring(0, 20) : value;
-            }
-        }
     }
 
     public interface IParcingFileConfig {

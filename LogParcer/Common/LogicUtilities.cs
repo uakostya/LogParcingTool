@@ -38,8 +38,8 @@ namespace LogParcer.Common {
             foreach (var row in logItems) {
                 sheet.Cell(++i, 1).Value = row.Date;
                 sheet.Cell(i, 2).Value = row.ExecutionTime;
-                if (row.Query.Length < 32766) {
-                    sheet.Cell(i, 3).Value = row.Query;
+                if (row.Message.Length < 32766) {
+					sheet.Cell(i, 3).Value = row.Message;
                 }
                 sheet.Row(i).Style.Alignment.SetWrapText(false);
             }
@@ -109,8 +109,8 @@ namespace LogParcer.Common {
             ProcessLogFile(options, config, file, (row, i) => {
                 sheet.Cell(++i, 1).Value = row.Value.Date;
                 sheet.Cell(i, 2).Value = row.Value.ExecutionTime;
-                if (row.Value.Query.Length < 32766) {
-                    sheet.Cell(i, 3).Value = row.Value.Query;
+				if (row.Value.Message.Length < 32766) {
+					sheet.Cell(i, 3).Value = row.Value.Message;
                 }
                 sheet.Row(i).Style.Alignment.SetWrapText(false);
                 return i;

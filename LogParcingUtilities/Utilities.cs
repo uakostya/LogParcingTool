@@ -49,7 +49,7 @@ namespace LogParcingUtilities
                         }
                         sql.AppendLine(tmpLine);
                     }
-                    row.Query = sql.ToString();
+                    row.Message = sql.ToString();
                     row.Logger = config.AppenderName;
                     result.Add(row.ExecutionTime,row);
                 }

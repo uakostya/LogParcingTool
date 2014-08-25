@@ -29,6 +29,10 @@ namespace LogParcer.ViewModel {
             set { SetValue(LogFileNameProperty, value); }
         }
 
+		public string AppenderName {
+            get { return GetValue<string>(AppenderNameProperty); }
+            set { SetValue(AppenderNameProperty, value); }
+        }
         public decimal MinExecutionTimeDecimal {
             get { return decimal.Parse(MinExecutionTime); }
         }
@@ -51,5 +55,6 @@ namespace LogParcer.ViewModel {
         public static readonly PropertyData LogFileNameProperty = RegisterProperty("LogFileName", typeof(string), "Common.log");
         public static readonly PropertyData SearchOptionProperty = RegisterProperty("SearchAllDirs", typeof(bool), true);
         public static readonly PropertyData RunExportedFileProperty = RegisterProperty("RunExportedFile", typeof(bool), true);
+		public static readonly PropertyData AppenderNameProperty = RegisterProperty("AppenderName", typeof(string), "");
     }
 }
