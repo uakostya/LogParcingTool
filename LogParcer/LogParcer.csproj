@@ -16,7 +16,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
-    <NuGetPackageImportStamp>57dfcc17</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>5490f073</NuGetPackageImportStamp>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>C:\Users\Оля і Вадім\Desktop\LogParcer\</PublishUrl>
     <Install>true</Install>
@@ -49,12 +49,12 @@
     <DocumentationFile>
     </DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
-    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
     <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
     <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
-    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsRunCodeAnalysis>True</CodeContractsRunCodeAnalysis>
     <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
     <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
     <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
@@ -95,6 +95,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
@@ -109,12 +110,27 @@
   <PropertyGroup>
     <DelaySign>false</DelaySign>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>log_zoom.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>FB8683CDB0D6C1F90EC4151C3D28FD95D7AEAFF7</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>LogParcer_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Catel.Core">
       <HintPath>..\packages\Catel.Core.3.9.0\lib\net45\Catel.Core.dll</HintPath>
     </Reference>
     <Reference Include="Catel.Extensions.Controls">
       <HintPath>..\packages\Catel.Extensions.Controls.3.9.0\lib\net45\Catel.Extensions.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Catel.Fody.Attributes">
+      <HintPath>..\packages\Catel.Fody.2.2.0\lib\portable-net4+sl4+wp7+win8+wpa81+MonoAndroid14+MonoTouch40\Catel.Fody.Attributes.dll</HintPath>
     </Reference>
     <Reference Include="Catel.MVVM">
       <HintPath>..\packages\Catel.MVVM.3.9.0\lib\net45\Catel.MVVM.dll</HintPath>
@@ -125,8 +141,8 @@
     <Reference Include="DocumentFormat.OpenXml">
       <HintPath>..\packages\DocumentFormat.OpenXml.2.5\lib\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Windows.Shell">
-      <HintPath>..\packages\Microsoft.Windows.Shell.3.0.1.0\lib\net40\Microsoft.Windows.Shell.dll</HintPath>
+    <Reference Include="Fluent">
+      <HintPath>..\packages\Fluent.Ribbon.2.0.2\lib\net45\Fluent.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack">
       <HintPath>..\packages\Windows7APICodePack-Core.1.1.0.0\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
@@ -135,15 +151,12 @@
       <HintPath>..\packages\Windows7APICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework.Classic" />
-    <Reference Include="RibbonControlsLibrary">
-      <HintPath>..\packages\RibbonControlsLibrary.4.0.0\lib\net40\RibbonControlsLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.MVVM.3.9.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fluent.Ribbon.2.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -188,7 +201,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Common\Commands.cs" />
     <Compile Include="Common\LogicUtilities.cs" />
     <Compile Include="Controls\CircularProgressBar.xaml.cs">
       <DependentUpon>CircularProgressBar.xaml</DependentUpon>
@@ -196,11 +208,11 @@
     <Compile Include="Controls\LoadingPanel.xaml.cs">
       <DependentUpon>LoadingPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ViewModel\ButtonData.cs" />
     <Compile Include="ViewModel\ControlData.cs" />
     <Compile Include="ViewModel\LogItemVM.cs" />
     <Compile Include="ViewModel\LogAnalisysWindowVM.cs" />
-    <Compile Include="ViewModel\LogParcingControlsModel.cs" />
     <Compile Include="ViewModel\LoadingPanelVM.cs" />
     <Compile Include="ViewModel\SettingsVM.cs" />
     <Compile Include="View\LogAnalisys.xaml.cs">
@@ -229,6 +241,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="LogParcer_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -262,15 +275,42 @@
     <Resource Include="Images\folder.png" />
     <Resource Include="Images\subDirs.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\excel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Load.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>Клиентский профиль .NET Framework 3.5 с пакетом обновления 1 %28SP1%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="log_zoom.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Import Project="..\packages\Fody.1.24.0\build\Fody.targets" Condition="Exists('..\packages\Fody.1.24.0\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Включите восстановление пакетов NuGet, чтобы загрузить их. Дополнительные сведения см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Fody.1.24.0\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.24.0\build\Fody.targets'))" />
   </Target>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

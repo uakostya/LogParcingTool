@@ -109,9 +109,9 @@
         <Button x:Name="btnClose"
             DockPanel.Dock="Right"
             Style="{StaticResource closeButton}"
-            ToolTip="Close"
+            ToolTip="Cancel current operation"
             Click="OnCloseClick"
-            Content="Close X" />
+            Content="Cancel X" />
 
         <ctr:CircularProgressBar x:Name="progressBar"
                              DockPanel.Dock="Left"
