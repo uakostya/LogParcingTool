@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogParcer", "LogParcer\LogParcer.csproj", "{0EFDE3D3-A298-4868-9DBA-5A894B3A16A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogParcingUtilities", "LogParcingUtilities\LogParcingUtilities.csproj", "{820795C9-8434-4CDA-B51B-7C4956D0F205}"
