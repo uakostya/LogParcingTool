@@ -90,14 +90,10 @@ namespace LogParcer.Controls {
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
         private void OnCloseClick(object sender, RoutedEventArgs e) {
-            if (ClosePanelCommand != null) {
-                ClosePanelCommand.Execute(null);
-            }
+			ClosePanelCommand.Execute(null);
         }
         private void OnRunCommandClick(object sender, RoutedEventArgs e) {
-            if (VMRoutedCommand != null) {
-                VMRoutedCommand.Execute(null);
-            }
+			VMRoutedCommand.Execute(null);
         }
     }
 }
