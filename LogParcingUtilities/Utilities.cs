@@ -9,6 +9,7 @@ using LogParcer;
 
 namespace LogParcingUtilities
 {
+	[LogParcingModule("DBExecutorLogParcer")]
     public class DBExecutorLogParcer : ILogParcer {
         public SortedList<decimal,LogItem> ParceFile(string fileName, IParcingFileConfig config) {
             var result = new SortedList<decimal, LogItem>(new DuplicateKeyComparer<decimal>());

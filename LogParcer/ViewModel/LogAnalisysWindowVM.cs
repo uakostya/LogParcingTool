@@ -37,6 +37,7 @@ namespace LogParcer.ViewModel {
         public ObservableCollection<LogItemVM> LogItems { get; set; }
         public readonly SettingsVM Settings = InitSettings();
         public readonly LoadingPanelVM LoadingPanel = new LoadingPanelVM();
+		public readonly LogParcerConfigVM LogParcerConfig = new LogParcerConfigVM();
 
         public LogAnalisysWindowVM() {
             LogItems = new ObservableCollection<LogItemVM>();

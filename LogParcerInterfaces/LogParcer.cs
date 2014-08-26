@@ -26,4 +26,17 @@ namespace LogParcer {
         SortedList<decimal, LogItem> ParceFile(string fileName, IParcingFileConfig config);
         IParcingFileConfig GetFileConfig();
     }
+	[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple =true)]
+	public sealed class LogParcingModuleAttribute : Attribute {
+		readonly string caption;
+		public LogParcingModuleAttribute(string caption) {
+			this.caption = caption;
+
+		}
+		public string Caption {
+			get {
+				return caption;
+			}
+		}
+	} 
 }

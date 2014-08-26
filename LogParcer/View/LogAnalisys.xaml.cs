@@ -19,6 +19,7 @@ namespace LogParcer.View {
             ExcelRibbonGroup.DataContext = CurrentVM.Settings;
             LoadingPanel.DataContext = CurrentVM.LoadingPanel;
 			MainTab.DataContext = CurrentVM;
+			SettingsTab.DataContext = CurrentVM.LogParcerConfig;
         }
 
         void Current_Exit(object sender, ExitEventArgs e) {

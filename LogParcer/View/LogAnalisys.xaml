@@ -26,6 +26,11 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Fluent:Ribbon x:Name="RibbonControl" Grid.Row="0">
+            <Fluent:RibbonTabItem Header="Settings" Name="SettingsTab">
+                <Fluent:RibbonGroupBox Header="Parsing module" MinWidth="200pt">
+                    <Fluent:ComboBox Header="Module assambly" ItemsSource="{Binding Modules}" DisplayMemberPath="Caption" Name="tmpCbe"/>
+                </Fluent:RibbonGroupBox>
+            </Fluent:RibbonTabItem>
             <Fluent:RibbonTabItem Header="Main" Name="MainTab">
                 <Fluent:RibbonGroupBox Header="Log files" >
                     <Fluent:Button x:Name="openBtn" Command="{Binding OpenLog}" SizeDefinition="Middle"  Header="Open" Icon="..\Images\file.png" />

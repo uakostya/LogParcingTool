@@ -209,11 +209,13 @@
       <DependentUpon>LoadingPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Model\Module.cs" />
     <Compile Include="ViewModel\ButtonData.cs" />
     <Compile Include="ViewModel\ControlData.cs" />
     <Compile Include="ViewModel\LogItemVM.cs" />
     <Compile Include="ViewModel\LogAnalisysWindowVM.cs" />
     <Compile Include="ViewModel\LoadingPanelVM.cs" />
+    <Compile Include="ViewModel\LogParcerConfigVM.cs" />
     <Compile Include="ViewModel\SettingsVM.cs" />
     <Compile Include="View\LogAnalisys.xaml.cs">
       <DependentUpon>LogAnalisys.xaml</DependentUpon>
@@ -266,9 +268,7 @@
       <Name>LogParcingUtilities</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Images\file.png" />
     <Resource Include="Images\folder.png" />
