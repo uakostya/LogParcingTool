@@ -11,6 +11,7 @@
              xmlns:local="clr-namespace:LogParcer.View" x:Class="LogParcer.View.LogAnalisys"
              mc:Ignorable="d" d:DesignHeight="369" d:DesignWidth="1026">
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <ObjectDataProvider MethodName="GetValues"
         ObjectType="{x:Type sys:Enum}"
         x:Key="ExampleEnumValues">
@@ -28,10 +29,10 @@
         <Fluent:Ribbon x:Name="RibbonControl" Grid.Row="0">
             <Fluent:RibbonTabItem Header="Settings" Name="SettingsTab">
                 <Fluent:RibbonGroupBox Header="Parsing module" MinWidth="200pt">
-                    <Fluent:ComboBox Header="Module assambly" ItemsSource="{Binding Modules}" DisplayMemberPath="Caption" Name="tmpCbe"/>
+                    <Fluent:ComboBox Header="Module assambly" ItemsSource="{Binding Modules}" DisplayMemberPath="Caption" MinWidth="200pt" SelectedItem="{Binding CurrentModule}"/>
                 </Fluent:RibbonGroupBox>
             </Fluent:RibbonTabItem>
-            <Fluent:RibbonTabItem Header="Main" Name="MainTab">
+            <Fluent:RibbonTabItem Header="Main" Name="MainTab" Visibility="{Binding ParcingEngineInstanced, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Fluent:RibbonGroupBox Header="Log files" >
                     <Fluent:Button x:Name="openBtn" Command="{Binding OpenLog}" SizeDefinition="Middle"  Header="Open" Icon="..\Images\file.png" />
                     <Fluent:Button SizeDefinition="Middle" Command="{Binding Browse}" Header="Browse" Icon="..\Images\folder.png"/>
@@ -96,7 +97,7 @@
             <ScrollViewer Grid.Column="1">
                 <TextBox x:Name="SqlTextBox" Padding="5pt" 
 					DataContext="{Binding SelectedItem, ElementName=LogItemsListView}" 
-					Text="{Binding Query}" IsReadOnly="True"/>
+					Text="{Binding Message}" IsReadOnly="True"/>
             </ScrollViewer>
         </Grid>
         <controls:LoadingPanel Grid.Row="2" x:Name="LoadingPanel"

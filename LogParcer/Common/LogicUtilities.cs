@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using Catel.Logging;
 using ClosedXML.Excel;
-using LogParcingUtilities;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace LogParcer.Common {
@@ -138,7 +137,7 @@ namespace LogParcer.Common {
        public string Directory { get; set; }
        public string OutFile { get; set; }
        public CancellationToken CancellationToken { get; set; }
-       public DBExecutorLogParcer Parcer { get; set; }
+       public ILogParcer Parcer { get; set; }
        public SearchOption SearchOption { get; set; }
     }
 }

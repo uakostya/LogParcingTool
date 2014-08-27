@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
-using System.Threading.Tasks;
 using LogParcer;
 
-namespace LogParcingUtilities
+namespace Terrasoft.DBExecutorLogParcer
 {
-	[LogParcingModule("DBExecutorLogParcer")]
+	[LogParcingModule("Парсер DBExecutorLogParcer")]
     public class DBExecutorLogParcer : ILogParcer {
         public SortedList<decimal,LogItem> ParceFile(string fileName, IParcingFileConfig config) {
-            var result = new SortedList<decimal, LogItem>(new DuplicateKeyComparer<decimal>());
+            var result = Utilities.GetDataContainer();
             using (TextReader reader = new StreamReader(fileName, config.Encoding)) {
                 var sql = new StringBuilder();
                 var firstLine = string.Empty;
@@ -67,6 +65,7 @@ namespace LogParcingUtilities
             return new ParcingFileConfig();
         }
     }
+
     public class ParcingFileConfig : IParcingFileConfig {
         public ParcingFileConfig() {
             ColumnSplitOptions = StringSplitOptions.RemoveEmptyEntries;
@@ -78,16 +77,5 @@ namespace LogParcingUtilities
         public StringSplitOptions ColumnSplitOptions { get; set; }
         public Encoding Encoding { get; set; }
     }
-	[Serializable]
-    public class DuplicateKeyComparer<TKey> : IComparer<TKey> where TKey : IComparable {
-        #region IComparer<TKey> Members
-        public int Compare(TKey x, TKey y) {
-            int result = y.CompareTo(x);
-            if (result == 0)
-                return 1;  
-            return result;
-        }
-
-        #endregion
-    }
+	
 }

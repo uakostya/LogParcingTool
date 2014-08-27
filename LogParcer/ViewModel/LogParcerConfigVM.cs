@@ -1,27 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Catel.Data;
 using System.IO;
 using Catel.MVVM;
-using LogParcer.Model;
+using Module = LogParcer.Model.Module;
 
 namespace LogParcer.ViewModel {
 	public class LogParcerConfigVM : ViewModelBase {
-		public LogParcerConfigVM() {
+	    private LogAnalisysWindowVM _mainVM;
+
+        public LogParcerConfigVM(LogAnalisysWindowVM mainVM = null) {
+            _mainVM = mainVM;
 			Modules = new ObservableCollection<Module>();
 			LoadAssemblies();
 		}
-		private async void LoadAssemblies() {
+
+	    private string GetModulesDirectoryName() {
+            var startDir = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+	        var name = ConfigurationManager.AppSettings["modulesDirectoryName"] ?? "modules";
+            if (startDir != null) {
+	            var modulesDir = Path.Combine(startDir, name);
+	            if (!Directory.Exists(modulesDir)) {
+	                Directory.CreateDirectory(modulesDir);
+	            }
+	            return modulesDir;
+	        }
+            throw  new ApplicationException("Can't locate startup path");
+	    }
+
+	    private async void LoadAssemblies() {
 			var types = await Task.Run(() => {
 				var modules = new List<Module>();
-				var startDir = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
-				var modulesDir = Path.Combine(startDir, "modules");
+			    var modulesDir = GetModulesDirectoryName();
 				foreach (var modulePath in Directory.EnumerateFiles(modulesDir, "*.dll")) {
-					var assambly = System.Reflection.Assembly.LoadFrom(modulePath);
+					var assambly = Assembly.LoadFrom(modulePath);
 					foreach (var type in assambly.DefinedTypes) {
 						var data = type.GetCustomAttributes(typeof(LogParcingModuleAttribute), false).FirstOrDefault();
 						if (data != null) {
@@ -42,15 +60,27 @@ namespace LogParcer.ViewModel {
 		}
 			
 		public ObservableCollection<Module> Modules {get;set;}
-		public string CurrentAssembly {
+        public Module CurrentModule {
 			get {
-				return GetValue<string>(CurrentAssemblyProperty);
+                return GetValue<Module>(CurrentModuleProperty);
 			}
 			set {
-				SetValue(CurrentAssemblyProperty, value);
+                SetValue(CurrentModuleProperty, value);
+			    SetCurrentParcingModule(value);
 			}
 		}
 
-		public static readonly PropertyData CurrentAssemblyProperty = RegisterProperty("CurrentAssembly", typeof(string), typeof(LogParcerConfigVM));
+	    private void SetCurrentParcingModule(Module moduleConfig) {
+	        if (moduleConfig != null) {
+	            var assambly = Assembly.LoadFrom(moduleConfig.AssemlyPath);
+	            var instance = (ILogParcer) assambly.CreateInstance(moduleConfig.TypeName);
+	            _mainVM.ParcingEngine = instance;
+	        }
+	        else {
+	            _mainVM.ParcingEngine = null;
+                _mainVM.LogItems.Clear();
+	        }
+	    }
+	    public static readonly PropertyData CurrentModuleProperty = RegisterProperty("CurrentModule", typeof(Module), typeof(LogParcerConfigVM));
 	}
 }

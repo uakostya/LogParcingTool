@@ -263,10 +263,6 @@
       <Project>{855267d5-b1e1-43c7-924b-723a0ae7cc94}</Project>
       <Name>LogParcerInterfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LogParcingUtilities\LogParcingUtilities.csproj">
-      <Project>{820795c9-8434-4cda-b51b-7c4956d0f205}</Project>
-      <Name>LogParcingUtilities</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
