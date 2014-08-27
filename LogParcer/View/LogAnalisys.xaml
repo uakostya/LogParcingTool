@@ -30,6 +30,11 @@
             <Fluent:RibbonTabItem Header="Settings" Name="SettingsTab">
                 <Fluent:RibbonGroupBox Header="Parsing module" MinWidth="200pt">
                     <Fluent:ComboBox Header="Module assambly" ItemsSource="{Binding Modules}" DisplayMemberPath="Caption" MinWidth="200pt" SelectedItem="{Binding CurrentModule}"/>
+                    <Fluent:Button Header="Refresh" SizeDefinition="Middle" Command="{Binding Refresh}"/>
+                </Fluent:RibbonGroupBox>
+                <Fluent:RibbonGroupBox Header="Parsing module settings">
+                    <Fluent:TextBox MinWidth="150pt" Margin="0 5pt" Header="Row separator" Text="{Binding RowSeparator}"/>
+                    <Fluent:TextBox MinWidth="150pt" Header="Column separator" Text="{Binding ColumnSeparator}"/>
                 </Fluent:RibbonGroupBox>
             </Fluent:RibbonTabItem>
             <Fluent:RibbonTabItem Header="Main" Name="MainTab" Visibility="{Binding ParcingEngineInstanced, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -38,16 +43,14 @@
                     <Fluent:Button SizeDefinition="Middle" Command="{Binding Browse}" Header="Browse" Icon="..\Images\folder.png"/>
                     <Fluent:Button SizeDefinition="Middle" Command="{Binding Export}" Header="Export"  Icon="..\Images\excel.png"/>
                 </Fluent:RibbonGroupBox>
-                <Fluent:RibbonGroupBox Header="Utils" >
-                    <Fluent:Button Header="Refresh" Command="{Binding RefreshListView}" LargeIcon="..\Images\refresh.png"/>
-                </Fluent:RibbonGroupBox>
                 <Fluent:RibbonGroupBox  x:Name="SettingsRibbonGroup" Header="Parcing settings" >
                     <Fluent:ToggleButton Header="Search all dirs" LargeIcon="../Images/subDirs.png"
 						IsChecked="{Binding SearchAllDirs}" />
                     <Fluent:TextBox Header="File name" 
 						Text="{Binding LogFileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="14"/>
-                    <Fluent:TextBox Header="Min query time" Margin="0 5pt 0 0" TextChanged="TextBox_TextChanged"
+                    <Fluent:TextBox MinWidth="100pt" Header="Min query time" Margin="0 5pt 0 0" TextChanged="TextBox_TextChanged"
 						Text="{Binding MinExecutionTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="14"/>
+                    <Fluent:Button Margin="5pt 0 0 0" Header="Refresh" DataContext="{Binding ElementName=MainTab, Path=DataContext}"  Command="{Binding RefreshListView}" LargeIcon="..\Images\refresh.png"/>
                 </Fluent:RibbonGroupBox>
                 <Fluent:RibbonGroupBox x:Name="ExcelRibbonGroup" Header="Excel ">
                     <Fluent:CheckBox Header="Use min query time" IsChecked="{Binding UseMinExecTimeInExcell}" FontSize="14"/>
@@ -82,6 +85,14 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                             <GridViewColumnHeader x:Name="ExecutionTimeHeader" Content="ExecutionTime" />
+                        </GridViewColumn>
+                        <GridViewColumn Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Level}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                            <GridViewColumnHeader x:Name="LevelHeader" Content="Level" />
                         </GridViewColumn>
                         <GridViewColumn  Width="200">
                             <GridViewColumn.CellTemplate>

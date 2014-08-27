@@ -14,7 +14,7 @@ namespace LogParcer.Common {
     public static class LogicUtilities {
         private static readonly ILog Log = LogManager.GetLogger(typeof (FileLogListener));
         public static void DoConvertOperation(ProcessingOptions options) {
-            IParcingFileConfig config = options.Parcer.GetFileConfig();
+            IParcingFileConfig config = options.Config;
             var pOpt = new ParallelOptions {CancellationToken = options.CancellationToken};
             var sheets = new ConcurrentBag<IXLWorksheet>();
             ParallelLoopResult result;
@@ -37,14 +37,16 @@ namespace LogParcer.Common {
             foreach (var row in logItems) {
                 sheet.Cell(++i, 1).Value = row.Date;
                 sheet.Cell(i, 2).Value = row.ExecutionTime;
+				sheet.Cell(i, 3).Value = row.Level;
                 if (row.Message.Length < 32766) {
-					sheet.Cell(i, 3).Value = row.Message;
+					sheet.Cell(i, 4).Value = row.Message;
                 }
                 sheet.Row(i).Style.Alignment.SetWrapText(false);
             }
             sheet.Cell(1, 1).WorksheetColumn().AdjustToContents();
             sheet.Cell(1, 2).WorksheetColumn().AdjustToContents();
             sheet.Cell(1, 3).WorksheetColumn().AdjustToContents();
+			sheet.Cell(1, 4).WorksheetColumn().AdjustToContents();
             book.SaveAs(fileName);
         }
 
@@ -73,7 +75,7 @@ namespace LogParcer.Common {
             } 
         }
         public static ConcurrentDictionary<string, SortedList<decimal, LogItem>> LoadFromDir(ProcessingOptions options) {
-            IParcingFileConfig config = options.Parcer.GetFileConfig();
+            IParcingFileConfig config = options.Config;
             var result = new ConcurrentDictionary<string, SortedList<decimal, LogItem>>(); 
             var pOpt = new ParallelOptions { CancellationToken = options.CancellationToken };
             var dirList = Directory.EnumerateDirectories(options.Directory, "*.*", options.SearchOption).ToList();
@@ -108,8 +110,9 @@ namespace LogParcer.Common {
             ProcessLogFile(options, config, file, (row, i) => {
                 sheet.Cell(++i, 1).Value = row.Value.Date;
                 sheet.Cell(i, 2).Value = row.Value.ExecutionTime;
+				sheet.Cell(i, 3).Value = row.Value.Level;
 				if (row.Value.Message.Length < 32766) {
-					sheet.Cell(i, 3).Value = row.Value.Message;
+					sheet.Cell(i, 4).Value = row.Value.Message;
                 }
                 sheet.Row(i).Style.Alignment.SetWrapText(false);
                 return i;
@@ -117,6 +120,7 @@ namespace LogParcer.Common {
             sheet.Cell(1, 1).WorksheetColumn().AdjustToContents();
             sheet.Cell(1, 2).WorksheetColumn().AdjustToContents();
             sheet.Cell(1, 3).WorksheetColumn().AdjustToContents();
+			sheet.Cell(1, 4).WorksheetColumn().AdjustToContents();
             sheets.Add(sheet);
         }
         private static void ProcessLogFile(ProcessingOptions options, IParcingFileConfig config, string file
@@ -138,6 +142,7 @@ namespace LogParcer.Common {
        public string OutFile { get; set; }
        public CancellationToken CancellationToken { get; set; }
        public ILogParcer Parcer { get; set; }
+	   public IParcingFileConfig Config { get; set; }
        public SearchOption SearchOption { get; set; }
     }
 }

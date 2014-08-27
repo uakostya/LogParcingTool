@@ -18,9 +18,12 @@ namespace Terrasoft.HelloWorld {
     }
 
     public class ParcingFileConfig : IParcingFileConfig {
-        public string AppenderName { get; set; }
+		public ParcingFileConfig() {
+			RowSeparator = "Some parameter";
+			ColumnSeparator = new char[] {'%'};
+		}
+        public string RowSeparator { get; set; }
         public char[] ColumnSeparator { get; set; }
-        public StringSplitOptions ColumnSplitOptions { get; set; }
         public Encoding Encoding { get; set; }
     }
 

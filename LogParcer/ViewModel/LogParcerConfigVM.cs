@@ -14,24 +14,25 @@ using Module = LogParcer.Model.Module;
 namespace LogParcer.ViewModel {
 	public class LogParcerConfigVM : ViewModelBase {
 	    private LogAnalisysWindowVM _mainVM;
-
+		private IParcingFileConfig _config;
         public LogParcerConfigVM(LogAnalisysWindowVM mainVM = null) {
             _mainVM = mainVM;
 			Modules = new ObservableCollection<Module>();
+			Refresh = new Command(() => {
+				Modules.Clear();
+				LoadAssemblies();
+			});
 			LoadAssemblies();
 		}
 
 	    private string GetModulesDirectoryName() {
             var startDir = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
 	        var name = ConfigurationManager.AppSettings["modulesDirectoryName"] ?? "modules";
-            if (startDir != null) {
-	            var modulesDir = Path.Combine(startDir, name);
-	            if (!Directory.Exists(modulesDir)) {
-	                Directory.CreateDirectory(modulesDir);
-	            }
-	            return modulesDir;
-	        }
-            throw  new ApplicationException("Can't locate startup path");
+			var modulesDir = Path.Combine(startDir, name);
+			if (!Directory.Exists(modulesDir)) {
+				Directory.CreateDirectory(modulesDir);
+			}
+			return modulesDir;
 	    }
 
 	    private async void LoadAssemblies() {
@@ -67,6 +68,7 @@ namespace LogParcer.ViewModel {
 			set {
                 SetValue(CurrentModuleProperty, value);
 			    SetCurrentParcingModule(value);
+				InitConfig();
 			}
 		}
 
@@ -77,10 +79,54 @@ namespace LogParcer.ViewModel {
 	            _mainVM.ParcingEngine = instance;
 	        }
 	        else {
-	            _mainVM.ParcingEngine = null;
-                _mainVM.LogItems.Clear();
+				Clear();
 	        }
 	    }
+		private void InitConfig() {
+			if (_mainVM.ParcingEngine == null)
+				return;
+			_config = _mainVM.ParcingEngine.GetFileConfig();
+			RowSeparator = _config.RowSeparator;
+			ColumnSeparator = (_config.ColumnSeparator != null && _config.ColumnSeparator.Length>0)? _config.ColumnSeparator.First().ToString() : "";
+		}
+		private void Clear() {
+			_mainVM.ParcingEngine = null;
+			_mainVM.LogItems.Clear();
+			RowSeparator = string.Empty;
+			ColumnSeparator = string.Empty;
+			_config = null;
+		}
+
+		public IParcingFileConfig CurrentConfig {
+			get {
+				_config.RowSeparator = RowSeparator;
+				_config.ColumnSeparator = new char[] { !string.IsNullOrEmpty(ColumnSeparator) ? ColumnSeparator.First() : ' ' };
+				return _config;
+			}
+		}
+
+		public Command Refresh {
+			get;
+			set;
+		}
+		public string RowSeparator {
+			get {
+				return GetValue<string>(RowSeparatorProperty);
+			}
+			set {
+				SetValue(RowSeparatorProperty, value);
+			}
+		}
+		public string ColumnSeparator {
+			get {
+				return GetValue<string>(ColumnSeparatorProperty);
+			}
+			set {
+				SetValue(ColumnSeparatorProperty, value);
+			}
+		}
 	    public static readonly PropertyData CurrentModuleProperty = RegisterProperty("CurrentModule", typeof(Module), typeof(LogParcerConfigVM));
+		public static readonly PropertyData RowSeparatorProperty = RegisterProperty("RowSeparator", typeof(string), typeof(LogParcerConfigVM));
+		public static readonly PropertyData ColumnSeparatorProperty = RegisterProperty("ColumnSeparator", typeof(string), typeof(LogParcerConfigVM));
 	}
 }

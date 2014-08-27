@@ -11,7 +11,8 @@ namespace Terrasoft.DBExecutorLogParcer
     public class DBExecutorLogParcer : ILogParcer {
         public SortedList<decimal,LogItem> ParceFile(string fileName, IParcingFileConfig config) {
             var result = Utilities.GetDataContainer();
-            using (TextReader reader = new StreamReader(fileName, config.Encoding)) {
+			var splitOptions = StringSplitOptions.RemoveEmptyEntries;
+			using (TextReader reader = new StreamReader(fileName, config.Encoding)) {
                 var sql = new StringBuilder();
                 var firstLine = string.Empty;
                 string tmpLine = null;
@@ -26,9 +27,9 @@ namespace Terrasoft.DBExecutorLogParcer
                     if (string.IsNullOrWhiteSpace(firstLine)) continue;
                     var row = new LogItem();
                     var appender = string.Empty;
-                    var tmpArr = firstLine.Split(config.ColumnSeparator, config.ColumnSplitOptions);
+					var tmpArr = firstLine.Split(config.ColumnSeparator, splitOptions);
                     if (tmpArr.Length > 4) appender = tmpArr[4];
-                    if (appender != config.AppenderName) continue;
+                    if (appender != config.RowSeparator) continue;
                     var exectime = -1m;
                     if (decimal.TryParse(tmpArr[tmpArr.Length - 2], out exectime)) row.ExecutionTime = exectime/1000m;
                     if (tmpDate != default(DateTime)) {
@@ -37,19 +38,20 @@ namespace Terrasoft.DBExecutorLogParcer
                     } else {
                         row.Date = DateTime.Parse(GetDateString(tmpArr));
                     }
+					row.Level = tmpArr[3];
                     sql.Clear();
                     while (reader.Peek()>-1) {
                         tmpLine = reader.ReadLine();
                         if (string.IsNullOrWhiteSpace(tmpLine)) continue;
-                        if (tmpLine.Contains(config.AppenderName)) break;
-                        tmpArr = tmpLine.Split(config.ColumnSeparator, config.ColumnSplitOptions);
+                        if (tmpLine.Contains(config.RowSeparator)) break;
+						tmpArr = tmpLine.Split(config.ColumnSeparator, splitOptions);
                         if (DateTime.TryParse(GetDateString(tmpArr), out  tmpDate)) {
                             break;
                         }
                         sql.AppendLine(tmpLine);
                     }
                     row.Message = sql.ToString();
-                    row.Logger = config.AppenderName;
+                    row.Logger = config.RowSeparator;
                     result.Add(row.ExecutionTime,row);
                 }
             }
@@ -68,13 +70,12 @@ namespace Terrasoft.DBExecutorLogParcer
 
     public class ParcingFileConfig : IParcingFileConfig {
         public ParcingFileConfig() {
-            ColumnSplitOptions = StringSplitOptions.RemoveEmptyEntries;
-            AppenderName = "Terrasoft.Core.DB.DBExecutor";
+			ColumnSeparator = new char[] {' '};
+            RowSeparator = "Terrasoft.Core.DB.DBExecutor";
             Encoding = Encoding.UTF8;
         }
-        public string AppenderName { get; set; }
+        public string RowSeparator { get; set; }
         public char[] ColumnSeparator { get; set; }
-        public StringSplitOptions ColumnSplitOptions { get; set; }
         public Encoding Encoding { get; set; }
     }
 	

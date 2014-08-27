@@ -33,8 +33,13 @@ namespace LogParcer.ViewModel {
             get { return GetValue<string>(AppenderNameProperty); }
             set { SetValue(AppenderNameProperty, value); }
         }
+		private string DecimalSeparator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
         public decimal MinExecutionTimeDecimal {
-            get { return decimal.Parse(MinExecutionTime); }
+			get {
+				decimal val = 0;
+				decimal.TryParse((MinExecutionTime ?? "").Replace(".", DecimalSeparator).Replace(",", DecimalSeparator), out val);
+				return val;
+			}
         }
         public bool UseMinExecTimeInExcell  {
             get { return GetValue<bool>(UseMinExecTimeInExcellProperty); }
@@ -55,6 +60,6 @@ namespace LogParcer.ViewModel {
         public static readonly PropertyData LogFileNameProperty = RegisterProperty("LogFileName", typeof(string), "Common.log");
         public static readonly PropertyData SearchOptionProperty = RegisterProperty("SearchAllDirs", typeof(bool), true);
         public static readonly PropertyData RunExportedFileProperty = RegisterProperty("RunExportedFile", typeof(bool), true);
-		public static readonly PropertyData AppenderNameProperty = RegisterProperty("AppenderName", typeof(string), "");
+		public static readonly PropertyData AppenderNameProperty = RegisterProperty("RowSeparator", typeof(string), "");
     }
 }

@@ -85,7 +85,8 @@ namespace LogParcer.ViewModel {
                 Directory = dialog.FileName, OutFile = saveDialog.FileName,
                 Parcer = ParcingEngine, LogFileName = Settings.LogFileName,
                 CancellationToken = _currenTokenSource.Token,
-                SearchOption = (Settings.SearchAllDirs) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
+                SearchOption = (Settings.SearchAllDirs) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly,
+				Config = LogParcerConfig.CurrentConfig
             };
             if (Settings.UseMinExecTimeInExcell) options.MinExecutionTime = Settings.MinExecutionTimeDecimal;
             await Task.Factory.StartNew(() => LogicUtilities.DoConvertOperation(options), TaskCreationOptions.LongRunning);
@@ -113,7 +114,7 @@ namespace LogParcer.ViewModel {
                 StopOtherWork();
                 LoadingPanel.ShowImportingMessage(_currenTokenSource, ofd.FileName);
                 _analizedData = new ConcurrentDictionary<string, SortedList<decimal, LogItem>>();
-                _analizedData[ofd.FileName] = await Task.Run(() => ParcingEngine.ParceFile(ofd.FileName, ParcingEngine.GetFileConfig()));
+                _analizedData[ofd.FileName] = await Task.Run(() => ParcingEngine.ParceFile(ofd.FileName, LogParcerConfig.CurrentConfig));
                 var infVM = await GetViewModelCollection();
                 LoadingPanel.HideImportingMessage();
                 LogItems.Clear();
@@ -131,7 +132,8 @@ namespace LogParcer.ViewModel {
                 Directory = dialog.FileName,
                 Parcer = ParcingEngine, LogFileName = Settings.LogFileName,
                 CancellationToken = _currenTokenSource.Token,
-                SearchOption = (Settings.SearchAllDirs) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
+                SearchOption = (Settings.SearchAllDirs) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly,
+				Config = LogParcerConfig.CurrentConfig
             };
             _analizedData = await Task.Run(() => LogicUtilities.LoadFromDir(options));
             var infVM = await GetViewModelCollection();

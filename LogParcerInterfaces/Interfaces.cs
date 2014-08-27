@@ -4,15 +4,15 @@ using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace LogParcer {
+	public interface ILogParcer {
+		SortedList<decimal, LogItem> ParceFile(string fileName, IParcingFileConfig config);
+		IParcingFileConfig GetFileConfig();
+	}
+
     public interface IParcingFileConfig {
-        string AppenderName { get; set; }
+        string RowSeparator { get; set; }
         char[] ColumnSeparator { get; set; }
-        StringSplitOptions ColumnSplitOptions { get; set; }
         Encoding Encoding { get; set; }
-    }
-    public interface ILogParcer {
-        SortedList<decimal, LogItem> ParceFile(string fileName, IParcingFileConfig config);
-        IParcingFileConfig GetFileConfig();
     }
     
     [Serializable]
